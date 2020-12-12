@@ -1,0 +1,29 @@
+server:
+  port: 18081
+
+spring:
+  application:
+    name: goods
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: .xu.LONG..
+    username: root
+    url: jdbc:mysql://localhost/changgou_goods?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka
+  instance:
+    prefer-ip-address: true
+
+feign:
+  hystrix:
+    enabled: true
+
+# 使用通用mapper不用配置
+#mybatis:
+#  configuration:
+#    map-underscore-to-camel-case: true
+#  mapper-locations: classpath:mapper/*Mapper.xml
+#  type-aliases-package: com.changgou.goods.pojo
