@@ -1,14 +1,47 @@
 package com.changgou.goods.service;
+
 import com.changgou.goods.pojo.Goods;
 import com.changgou.goods.pojo.Spu;
 import com.github.pagehelper.PageInfo;
 import java.util.List;
-/****
- * @Author:admin
- * @Description:Spu业务层接口
- * @Date 2019/6/14 0:16
- *****/
+
+/**
+ * Spu业务层接口
+ **/
 public interface SpuService {
+
+    /**
+     * 批量上架
+     * @param spuIds 要上架的所有商品ID
+     */
+    void putMany(Long[] spuIds);
+
+    /***
+     * 商品上架
+     * @param spuId
+     */
+    void put(Long spuId);
+
+    /**
+     * 商品下架
+     */
+    void pull(Long spuId);
+
+    /**
+     * 商品审核
+     */
+    void audit(Long spuId);
+
+    /**
+     * 根据 ID查询Goods
+     * @param id spu的 id
+     */
+    Goods findGoodsById(Long id);
+
+    /**
+     * 添加商品(Spu+ SkuList)
+     */
+    void saveGoods(Goods goods);
 
     /***
      * Spu多条件分页查询
@@ -65,21 +98,9 @@ public interface SpuService {
      */
     List<Spu> findAll();
 
-    /**
-     * 添加商品(SPU+ SKUlIST)
-     * @param goods   update  add
-     */
-    void save(Goods goods);
 
-    Goods findGoodsById(Long id);
 
-    void auditSpu(Long id);
 
-    /**
-     * 下架
-     * @param id
-     */
-    void pullSpu(Long id);
 
     void logicDeleteSpu(Long id);
 

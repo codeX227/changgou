@@ -4,15 +4,16 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 描述
- *
- * @author www.itheima.com
- * @version 1.0
- * @package com.changgou.goods.pojo *
- * @since 1.0
+ * 商品信息组合对象
+ * List<Sku>
+ * Spu
  */
 public class Goods implements Serializable {
+
+    //Spu信息
     private Spu spu;
+
+    //Sku集合信息
     private List<Sku> skuList;
 
     public Spu getSpu() {
