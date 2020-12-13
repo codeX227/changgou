@@ -1,7 +1,4 @@
-package com.changgou.goods.goods.pojo;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+package com.changgou.goods.pojo;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,10 +18,13 @@ public class Album implements Serializable{
 
     @Column(name = "title")
 	private String title;//相册名称
+
     @Column(name = "image")
 	private String image;//相册封面
+
     @Column(name = "image_items")
 	private String imageItems;//图片列表
+
 
 
 	//get方法
