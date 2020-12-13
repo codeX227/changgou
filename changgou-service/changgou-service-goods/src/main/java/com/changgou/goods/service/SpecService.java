@@ -9,6 +9,13 @@ import java.util.List;
  *****/
 public interface SpecService {
 
+    /**
+     * 根据分类的ID 查询规格的列表数据
+     * @param categoryId 三级分类的ID
+     * @return
+     */
+    List<Spec> findByCategoryId(Integer categoryId);
+
     /***
      * Spec多条件分页查询
      * @param spec
@@ -64,11 +71,4 @@ public interface SpecService {
      */
     List<Spec> findAll();
 
-
-    /**
-     * 根据分类的ID 查询规格的列表数据
-     * @param id 三级分类的ID
-     * @return
-     */
-    List<Spec> findByCategoryId(Integer id);
 }

@@ -20,6 +20,18 @@ public class BrandServiceImpl implements BrandService {
     @Autowired
     private BrandMapper brandMapper;
 
+    /**
+     * 根据分类 ID查询品牌集合
+     * @param categoryid 分类 id
+     */
+    @Override
+    public List<Brand> findByCategory(Integer categoryid) {
+        //两种方案:
+        //1. 自己写sql语句直接执行  推荐
+        //2. 调用通用的mapper的方法 一个个表查询
+
+        return brandMapper.findByCategory(categoryid);
+    }
 
     /**
      * Brand条件+分页查询
@@ -145,12 +157,4 @@ public class BrandServiceImpl implements BrandService {
         return brandMapper.selectAll();
     }
 
-    @Override
-    public List<Brand> findByCategory(Integer id) {
-        //两种方案:
-            //1. 自己写sql语句直接执行  推荐
-            //2. 调用通用的mapper的方法 一个个表查询
-
-        return brandMapper.findByCategory(id);
-    }
 }

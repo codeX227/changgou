@@ -23,6 +23,17 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    /**
+     *  根据父ID 查询该分类下的所有的子分类列表   如果是一级分类 pid = 0
+     */
+    @GetMapping("/list/{pid}")
+    public Result<List<Category>> findByParentId(@PathVariable("pid") Integer pid){
+        //SELECT * from tb_category where parent_id=0
+        List<Category> categories = categoryService.findByParentId(pid);
+
+        return new Result<>(true,StatusCode.OK,"查询分类列表成功",categories);
+    }
+
     /***
      * Category分页条件搜索实现
      * @param category
@@ -31,7 +42,9 @@ public class CategoryController {
      * @return
      */
     @PostMapping(value = "/search/{page}/{size}" )
-    public Result<PageInfo> findPage(@RequestBody(required = false)  Category category, @PathVariable  int page, @PathVariable  int size){
+    public Result<PageInfo> findPage(@RequestBody(required = false) Category category,
+                                     @PathVariable int page,
+                                     @PathVariable int size){
         //调用CategoryService实现分页条件查询Category
         PageInfo<Category> pageInfo = categoryService.findPage(category, page, size);
         return new Result(true, StatusCode.OK,"查询成功",pageInfo);
@@ -44,7 +57,7 @@ public class CategoryController {
      * @return
      */
     @GetMapping(value = "/search/{page}/{size}" )
-    public Result<PageInfo> findPage(@PathVariable  int page, @PathVariable  int size){
+    public Result<PageInfo> findPage(@PathVariable int page, @PathVariable int size){
         //调用CategoryService实现分页查询Category
         PageInfo<Category> pageInfo = categoryService.findPage(page, size);
         return new Result<PageInfo>(true,StatusCode.OK,"查询成功",pageInfo);
@@ -123,18 +136,4 @@ public class CategoryController {
         List<Category> list = categoryService.findAll();
         return new Result<List<Category>>(true, StatusCode.OK,"查询成功",list) ;
     }
-
-    /**
-     *  根据父ID 查询该分类下的所有的子分类列表   如果是一级分类 pid = 0
-     * @param pid
-     * @return
-     */
-    @GetMapping("/list/{pid}")
-    public Result<List<Category>> findByParentId(@PathVariable(name="pid") Integer pid){
-        //SELECT * from tb_category where parent_id=0
-        List<Category> categoryList = categoryService.findByParentId(pid);
-        return new Result<List<Category>>(true,StatusCode.OK,"查询分类列表成功",categoryList);
-    }
-
-
 }

@@ -23,6 +23,17 @@ public class SpecController {
     @Autowired
     private SpecService specService;
 
+    /**
+     * 根据商品分类的ID 查询该分类对应的 规格的列表
+     * @param categoryId 分类 id
+     */
+    @GetMapping("/category/{id}")
+    public Result<List<Spec>> findByCategoryId(@PathVariable("id") Integer categoryId){
+        List<Spec> specList = specService.findByCategoryId(categoryId);
+
+        return new Result<>(true,StatusCode.OK,"查询规格的列表成功",specList);
+    }
+
     /***
      * Spec分页条件搜索实现
      * @param spec
@@ -124,16 +135,4 @@ public class SpecController {
         return new Result<List<Spec>>(true, StatusCode.OK,"查询成功",list) ;
     }
 
-
-    /**
-     * 根据商品分类的ID 查询该分类对应的 规格的列表
-     *
-     */
-
-
-    @GetMapping("/category/{id}")
-    public Result<List<Spec>> findByCategoryId(@PathVariable(name="id") Integer id){
-        List<Spec> specList = specService.findByCategoryId(id);
-        return new Result<List<Spec>>(true,StatusCode.OK,"查询规格的列表成功",specList);
-    }
 }

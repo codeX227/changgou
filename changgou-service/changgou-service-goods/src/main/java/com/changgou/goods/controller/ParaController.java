@@ -26,6 +26,18 @@ public class ParaController {
     @Autowired
     private ParaService paraService;
 
+    /**
+     * 根据3 商品的分类的ID 查询该三级分类对应的参数的列表
+     * @param categoryId 分类的ID
+     * @return
+     */
+    @GetMapping("/category/{id}")
+    public Result<List<Para>> findParaByCategoryId(@PathVariable("id") Integer categoryId) {
+        List<Para> paraList = paraService.findParaByCategoryId(categoryId);
+
+        return new Result<>(true, StatusCode.OK, "参数列表查询成功", paraList);
+    }
+
     /***
      * Para分页条件搜索实现
      * @param para
@@ -126,18 +138,5 @@ public class ParaController {
         List<Para> list = paraService.findAll();
         return new Result<List<Para>>(true, StatusCode.OK, "查询成功", list);
     }
-
-    /**
-     * 根据3 商品的分类的ID 查询该三级分类对应的参数的列表
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/category/{id}")
-    public Result<List<Para>> findParaByCateogryId(@PathVariable(name = "id") Integer id) {
-        List<Para> paraList = paraService.findParaByCateogryId(id);
-        return new Result<List<Para>>(true, StatusCode.OK, "参数列表查询成功", paraList);
-    }
-
 
 }

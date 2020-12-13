@@ -20,6 +20,20 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
 
+    /**
+     * 根据分类的父节点ID查询所有字节的集合
+     * @param pid 父节点ID->1级分类=0
+     */
+    @Override
+    public List<Category> findByParentId(Integer pid) {
+        //根据父ID查询 SELECT * from tb_category where parent_id=#{pid}
+        //封装一个JavaBean,如果该JavaBean指定属性不会空，则会跟据指定属性为查询条件
+        Category record = new Category();
+        record.setParentId(pid);
+        return categoryMapper.select(record);
+
+//        return categoryMapper.selectByParentId(pid);
+    }
 
     /**
      * Category条件+分页查询
@@ -155,17 +169,5 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> findAll() {
         return categoryMapper.selectAll();
-    }
-
-    @Override
-    public List<Category> findByParentId(Integer pid) {
-        //SELECT * from tb_category where parent_id=0
-
-        Category record = new Category();
-        record.setParentId(pid);//查询的条件  相当于 where parent_id=0
-        //record.setId(1);//where parent_id=0 and id = 1
-        List<Category> categoryList = categoryMapper.select(record);
-
-        return categoryList;
     }
 }

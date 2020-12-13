@@ -9,6 +9,11 @@ import java.util.List;
  *****/
 public interface ParaService {
 
+    /**
+     * 根据分类 id查询参数集合->分类template_id->根据template_id查询参数集合
+     */
+    List<Para> findParaByCategoryId(Integer categoryId);
+
     /***
      * Para多条件分页查询
      * @param para
@@ -63,7 +68,5 @@ public interface ParaService {
      * @return
      */
     List<Para> findAll();
-
-    List<Para> findParaByCateogryId(Integer id);
 
 }
