@@ -45,6 +45,42 @@ public class SpuServiceImpl implements SpuService {
     private BrandMapper brandMapper;
 
     /**
+     * 恢复数据
+     * @param spuId
+     */
+    @Override
+    public void restore(Long spuId) {
+        Spu spu = spuMapper.selectByPrimaryKey(spuId);
+        //检查是否删除的商品
+        if(!spu.getIsDelete().equals("1")){
+            throw new RuntimeException("此商品未删除！");
+        }
+        //未删除
+        spu.setIsDelete("0");
+        //未审核
+        spu.setStatus("0");
+        spuMapper.updateByPrimaryKeySelective(spu);
+    }
+
+    /***
+     * 逻辑删除
+     * @param spuId
+     */
+    @Override
+    public void logicDelete(Long spuId) {
+        Spu spu = spuMapper.selectByPrimaryKey(spuId);
+        //检查是否下架的商品
+        if(!spu.getIsMarketable().equals("0")){
+            throw new RuntimeException("必须先下架再删除！");
+        }
+        //删除
+        spu.setIsDelete("1");
+        //未审核
+        spu.setStatus("0");
+        spuMapper.updateByPrimaryKeySelective(spu);
+    }
+
+    /**
      * 批量上架
      * @param spuIds 要上架的所有商品ID
      */
@@ -350,7 +386,6 @@ public class SpuServiceImpl implements SpuService {
 
     /**
      * 删除
-     *
      * @param id
      */
     @Override
@@ -359,8 +394,9 @@ public class SpuServiceImpl implements SpuService {
         if(spu==null){
             throw new RuntimeException("商品不存在");
         }
-        if (!spu.getIsDelete().equals("1")) {
-            throw new RuntimeException("必须先逻辑删除");
+        //检查是否被逻辑删除  ,必须先逻辑删除后才能物理删除
+        if(!spu.getIsDelete().equals("1")){
+            throw new RuntimeException("此商品不能删除！");
         }
         spuMapper.deleteByPrimaryKey(id);
     }
@@ -405,40 +441,5 @@ public class SpuServiceImpl implements SpuService {
     public List<Spu> findAll() {
         return spuMapper.selectAll();
     }
-
-
-    @Override
-    public void logicDeleteSpu(Long id) {
-        // update set is_delete=1 where id =? and is_delete=0
-        Spu spu = spuMapper.selectByPrimaryKey(id);
-        if(spu==null){
-            throw new RuntimeException("商品不存在");
-        }
-
-        if(spu.getIsMarketable().equals("1")){
-            throw new RuntimeException("商品还没下架,不能删除");
-        }
-        spu.setIsDelete("1");
-        spu.setStatus("0");
-        spuMapper.updateByPrimaryKeySelective(spu);
-    }
-
-    @Override
-    public void restoreSpu(Long id) {
-        // update set is_delete=0 where id =? and is_delete=1
-        Spu spu = spuMapper.selectByPrimaryKey(id);
-        if(spu==null){
-            throw new RuntimeException("商品不存在");
-        }
-        Spu data = new Spu();
-        data.setIsDelete("0");//恢复
-        Example exmaple = new Example(Spu.class);
-        Example.Criteria criteria = exmaple.createCriteria();
-        criteria.andEqualTo("id",id);//where id =1
-        criteria.andEqualTo("isDelete","1");
-        spuMapper.updateByExampleSelective(data,exmaple);
-// spuMapper.updateByPrimaryKeySelective(spu);//根据主键来进行更新  update set name=? where id=?
-    }
-
 
 }

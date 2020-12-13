@@ -10,6 +10,18 @@ import java.util.List;
  **/
 public interface SpuService {
 
+    /***
+     * 还原被删除商品
+     * @param spuId
+     */
+    void restore(Long spuId);
+
+    /***
+     * 逻辑删除
+     * @param spuId
+     */
+    void logicDelete(Long spuId);
+
     /**
      * 批量上架
      * @param spuIds 要上架的所有商品ID
@@ -98,12 +110,4 @@ public interface SpuService {
      */
     List<Spu> findAll();
 
-
-
-
-
-    void logicDeleteSpu(Long id);
-
-
-    void restoreSpu(Long id);
 }
