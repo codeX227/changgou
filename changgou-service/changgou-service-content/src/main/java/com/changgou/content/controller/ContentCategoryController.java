@@ -2,9 +2,9 @@ package com.changgou.content.controller;
 
 import com.changgou.content.pojo.ContentCategory;
 import com.changgou.content.service.ContentCategoryService;
+import com.changgou.goods.entity.Result;
+import com.changgou.goods.entity.StatusCode;
 import com.github.pagehelper.PageInfo;
-import entity.Result;
-import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,7 +72,7 @@ public class ContentCategoryController {
     public Result delete(@PathVariable Long id){
         //调用ContentCategoryService实现根据主键删除
         contentCategoryService.delete(id);
-        return new Result(true,StatusCode.OK,"删除成功");
+        return new Result(true, StatusCode.OK,"删除成功");
     }
 
     /***

@@ -121,6 +121,6 @@ public class SkuController {
     public Result<List<Sku>> findAll(){
         //调用SkuService实现查询所有Sku
         List<Sku> list = skuService.findAll();
-        return new Result<List<Sku>>(true, StatusCode.OK,"查询成功",list) ;
+        return new Result<>(true, StatusCode.OK,"查询成功",list) ;
     }
 }

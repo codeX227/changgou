@@ -9,6 +9,7 @@
         <option value="$PROJECT_DIR$/code-template-master/pom.xml" />
         <option value="$PROJECT_DIR$/starter-canal/pom.xml" />
         <option value="$PROJECT_DIR$/changgou-service-api/changgou-service-content-api/pom.xml" />
+        <option value="$PROJECT_DIR$/changgou-service-api/changgou-service-search-api/pom.xml" />
       </list>
     </option>
   </component>
