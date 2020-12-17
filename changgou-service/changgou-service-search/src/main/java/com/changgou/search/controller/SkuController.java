@@ -4,10 +4,9 @@ import com.changgou.goods.entity.Result;
 import com.changgou.goods.entity.StatusCode;
 import com.changgou.search.service.SkuService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/search")
@@ -16,6 +15,15 @@ public class SkuController {
 
     @Autowired
     private SkuService skuService;
+
+    /**
+     * 调用搜索实现
+     */
+    @GetMapping
+    public Map search(@RequestParam(required = false) Map<String,String> searchMap){
+
+        return skuService.search(searchMap);
+    }
 
     @GetMapping("/import")
     public Result importData(){

@@ -7,7 +7,7 @@ public interface SkuService {
     /**
      * 条件搜索
      */
-    Map<String,Object> search(Map<String,Object> searchMap);
+    Map<String,Object> search(Map<String,String> searchMap);
 
     /**
      * 导入数据到索引库
