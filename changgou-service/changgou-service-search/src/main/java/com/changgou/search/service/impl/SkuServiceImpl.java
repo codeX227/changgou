@@ -7,11 +7,17 @@ import com.changgou.goods.pojo.Sku;
 import com.changgou.search.dao.SkuEsMapper;
 import com.changgou.search.pojo.SkuInfo;
 import com.changgou.search.service.SkuService;
+import io.swagger.models.auth.In;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -72,7 +78,7 @@ public class SkuServiceImpl implements SkuService {
         NativeSearchQueryBuilder builder = new NativeSearchQueryBuilder();
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-    
+
         if (searchMap != null && searchMap.size() > 0){
             //根据关键词搜索
             String keywords = searchMap.get("keywords");
@@ -83,10 +89,74 @@ public class SkuServiceImpl implements SkuService {
             }
             //输入了分类 category
             if (!StringUtils.isEmpty(searchMap.get("category"))){
-                boolQuery.must(QueryBuilders);
+                boolQuery.must(QueryBuilders.termQuery("name",searchMap.get("category")));
+            }
+            //输入了品牌 brand
+            if (!StringUtils.isEmpty(searchMap.get("brand"))){
+                boolQuery.must(QueryBuilders.termQuery("brandName",searchMap.get("brand")));
+            }
+            //规格过滤实现：spec_网络=联通3G&spec_颜色=红
+            for (Map.Entry<String, String> entry : searchMap.entrySet()) {
+                String key = entry.getKey();
+                //如果key以spec_开始，则表示规格筛选
+                if (key.startsWith("spec_")){
+                    //规格条件的值
+                    String value = entry.getValue();
+                    // spec_网络 去掉前五个字符
+                    boolQuery.must(QueryBuilders.termQuery("specMap."+key.substring(5)+".keyword",value));
+                }
+            }
+            //price 0-500元 500-1000元 1000-2000元
+            String price = searchMap.get("price");
+            if (!StringUtils.isEmpty(price)){
+                //去掉中文"元"和"以上" 0-500 500-1000 1000-2000
+                price = price.replace("元", "").replace("以上", "");
+                //根据"-"分割    [0-500] [500-1000] [1000-2000]
+                String[] prices = price.split("-");
+                //x一定不为空，y有可能为空
+                if (prices != null && prices.length>0){
+                    //price > prices[0]
+                    boolQuery.must(QueryBuilders.rangeQuery("price").gt(Integer.parseInt(prices[0])));
+                    //prices[1]!=null price<prices[1]
+                    if (prices.length == 2){
+                        boolQuery.must(QueryBuilders.rangeQuery("price").lte(Integer.parseInt(prices[1])));
+                    }
+                }
+            }
+            //排序实现
+            String sortField = searchMap.get("sortField");
+            String sortRule = searchMap.get("sortRule");
+            if (!StringUtils.isEmpty(sortField) && !StringUtils.isEmpty(sortRule)){
+                builder.withSort(new FieldSortBuilder(sortField).order(SortOrder.valueOf(sortRule)));
             }
         }
+
+        //分页，不传参数则默认第一页
+        Integer pageNum = coverterPage(searchMap);  //默认第一页
+        Integer size = 3;     //默认查询条数
+        builder.withPageable(PageRequest.of(pageNum-1,size));
+
+
+        //将BoolQueryBuilder填充给NativeSearchQueryBuilder
+        builder.withQuery(boolQuery);
         return builder;
+    }
+
+    /**
+     * 接收前端传入的分页参数
+     * @param searchMap
+     * @return
+     */
+    public Integer coverterPage(Map<String,String> searchMap){
+        if (searchMap != null){
+            String pageNum = searchMap.get("pageNum");
+            try {
+                return Integer.parseInt(pageNum);
+            } catch (NumberFormatException e){
+
+            }
+        }
+        return 1;
     }
 
     /**
@@ -95,6 +165,19 @@ public class SkuServiceImpl implements SkuService {
      * @return
      */
     public HashMap<String, Object> searchList(NativeSearchQueryBuilder builder) {
+
+        //高亮配置
+        HighlightBuilder.Field field = new HighlightBuilder.Field("name");
+        //前缀
+        field.preTags("<em style=\"color:red;\">");
+        //后缀
+        field.postTags("</em>");
+        //碎片长度
+        field.fragmentSize(100);
+        //添加高亮
+        builder.withHighlightFields();
+
+
         //执行搜索
         AggregatedPage<SkuInfo> page = elasticsearchTemplate.queryForPage(builder.build(), SkuInfo.class);
 
