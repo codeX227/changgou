@@ -18,6 +18,7 @@
       <module fileurl="file://$PROJECT_DIR$/changgou-service/changgou-service-search/changgou-service-search.iml" filepath="$PROJECT_DIR$/changgou-service/changgou-service-search/changgou-service-search.iml" />
       <module fileurl="file://$PROJECT_DIR$/changgou-service-api/changgou-service-search-api/changgou-service-search-api.iml" filepath="$PROJECT_DIR$/changgou-service-api/changgou-service-search-api/changgou-service-search-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/changgou-web/changgou-web.iml" filepath="$PROJECT_DIR$/changgou-web/changgou-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/changgou-web/changgou-web-search/changgou-web-search.iml" filepath="$PROJECT_DIR$/changgou-web/changgou-web-search/changgou-web-search.iml" />
     </modules>
   </component>
 </project>
