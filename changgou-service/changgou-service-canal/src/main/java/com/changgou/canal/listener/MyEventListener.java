@@ -1,8 +1,11 @@
 package com.changgou.canal.listener;
 
 import com.alibaba.fastjson.JSON;
+import com.changgou.content.feign.ContentFeign;
 import com.changgou.content.pojo.Content;
 import com.changgou.goods.entity.Result;
+import com.xpand.starter.canal.annotation.CanalEventListener;
+import com.xpand.starter.canal.annotation.ListenPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import sun.rmi.runtime.Log;

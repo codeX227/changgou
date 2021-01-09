@@ -25,6 +25,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.SearchResultMapper;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -211,6 +212,14 @@ public class SkuServiceImpl implements SkuService {
         Integer size = 3;     //默认查询条数
         builder.withPageable(PageRequest.of(pageNum - 1, size));
 
+        //规格筛选
+        for (String key : searchMap.keySet()) {
+            //如果是规格参数
+            if (key.startsWith("spec_")){
+                String value = searchMap.get(key).replace("\\", "");
+                builder.withFilter(QueryBuilders.matchQuery("specMap."+key.substring(5)+".keyword",value));
+            }
+        }
 
         //将BoolQueryBuilder填充给NativeSearchQueryBuilder
         builder.withQuery(boolQuery);
@@ -298,6 +307,16 @@ public class SkuServiceImpl implements SkuService {
         resultMap.put("rows", contents);
         resultMap.put("total", totalElements);
         resultMap.put("totalPages", totalPages);
+
+        //获取搜索封装信息
+        NativeSearchQuery query = builder.build();
+        Pageable pageable = query.getPageable();
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+        //分页数据
+        resultMap.put("pageSize", pageSize);
+        resultMap.put("pageNumber", pageNumber);
+
         return resultMap;
     }
 

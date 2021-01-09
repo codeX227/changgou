@@ -1,6 +1,8 @@
 package com.changgou.search.controller;
 
+import com.changgou.goods.entity.Page;
 import com.changgou.search.feign.SkuFeign;
+import com.changgou.search.pojo.SkuInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,9 +25,16 @@ public class SkuController {
      */
     @GetMapping("/list")
     public String search(@RequestParam(required = false) Map<String,String> searchMap, Model model) throws Exception {
+        //替换特殊字符
+        handlerSearchMap(searchMap);
+
         //调用搜索微服务
         Map resultMap = skuFeign.search(searchMap);
         model.addAttribute("result",resultMap);
+
+        //计算分页
+        Page<SkuInfo> pageInfo = new Page<>(Long.parseLong(resultMap.get("total").toString()), Integer.parseInt(resultMap.get("pageNumber").toString())+1, Integer.parseInt(resultMap.get("pageSize").toString()));
+        model.addAttribute("pageInfo",pageInfo);
 
         //讲条件存储，用于页面回显数据
         model.addAttribute("searchMap",searchMap);
@@ -55,6 +64,10 @@ public class SkuController {
                 String value = entry.getValue();
                 url = url + key +"=" + value + "&";
 
+                //跳过分页参数
+                if (key.equalsIgnoreCase("pageNum")){
+                    continue;
+                }
                 //排序参数 跳过
                 if (key.equalsIgnoreCase("sortField") || key.equalsIgnoreCase("sortRule")){
                     continue;
@@ -66,5 +79,17 @@ public class SkuController {
             sortUrl = sortUrl.substring(0,url.length()-1);
         }
         return new String[]{url,sortUrl};
+    }
+
+    /**
+     * 替换特殊字符
+     */
+    public void handlerSearchMap(Map<String,String> searchMap){
+        if (searchMap != null){
+            for (Map.Entry<String, String> entry : searchMap.entrySet()) {
+                if (entry.getKey().startsWith("spec_"))
+                    entry.setValue(entry.getValue().replace("+","%2B"));
+            }
+        }
     }
 }

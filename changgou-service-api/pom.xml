@@ -11,6 +11,9 @@
     <artifactId>changgou-service-api</artifactId>
     <packaging>pom</packaging>
     <description>所有微服务的API抽取(JavaBean|Feign)</description>
+    <modules>
+        <module>changgou-service-user</module>
+    </modules>
 
     <dependencies>
         <dependency>
