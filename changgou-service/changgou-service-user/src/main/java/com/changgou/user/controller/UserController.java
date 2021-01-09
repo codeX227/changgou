@@ -31,13 +31,26 @@ public class UserController {
      * 用户登录
      */
     @GetMapping("/login")
-    public Result login(String username,String password){
+    public Result login(String username,String password,HttpServletResponse response){
         //查询用户信息
         User user = userService.findById(username);
         //对比密码-加密
         if (BCrypt.checkpw(password,user.getPassword())){
+            //创建用户令牌信息
+            HashMap<String, Object> tokenMap = new HashMap<>();
+            tokenMap.put("role","USER");
+            tokenMap.put("success","SUCCESS");
+            tokenMap.put("username",username);
+            String token = JwtUtil.createJWT(UUID.randomUUID().toString(), JSON.toJSONString(tokenMap), null);
+            //将令牌存入cookie
+            Cookie cookie = new Cookie("Authorization",token);
+            cookie.setDomain("localhost");
+            cookie.setPath("/");
+            response.addCookie(cookie);
+
+            //令牌作为参数给用户
             //登录成功
-            return new Result(true,StatusCode.OK,"登陆成功");
+            return new Result(true,StatusCode.OK,"登陆成功",token);
         }
         //登陆失败
         return new Result(true,StatusCode.LOGINERROR,"用户名或密码错误");
@@ -174,11 +187,5 @@ public class UserController {
             //失败
             return new Result<User>(false, StatusCode.LOGINERROR, "用户名或密码错误");
         }
-
-
-
-
-
-
     }
 }
