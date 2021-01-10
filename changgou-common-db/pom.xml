@@ -5,37 +5,38 @@
     <parent>
         <artifactId>changgou-parent</artifactId>
         <groupId>com.changgou</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <description>需要访问数据库的包依赖汇总</description>
+
     <artifactId>changgou-common-db</artifactId>
 
+    <!--依赖-->
     <dependencies>
-        <!-- 对changgou-common的依赖-->
+        <!--对changgou-common的依赖-->
         <dependency>
             <groupId>com.changgou</groupId>
             <artifactId>changgou-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
-
-        <!--通用 mapper 起步依赖, 0sql语句-->
+        <!--通用mapper起步依赖-->
         <dependency>
             <groupId>tk.mybatis</groupId>
             <artifactId>mapper-spring-boot-starter</artifactId>
             <version>2.0.4</version>
         </dependency>
-        <!-- MySQl数据库驱动 -->
+        <!--MySQL数据库驱动-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-
-        <!-- mybatis 分页插件-->
+        <!--mybatis分页插件-->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.2.5</version>
+            <version>1.2.3</version>
         </dependency>
     </dependencies>
+
+
 </project>

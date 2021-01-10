@@ -1,9 +1,9 @@
 package com.changgou.goods.controller;
-import com.changgou.goods.entity.Result;
-import com.changgou.goods.entity.StatusCode;
 import com.changgou.goods.pojo.Spec;
 import com.changgou.goods.service.SpecService;
 import com.github.pagehelper.PageInfo;
+import entity.Result;
+import entity.StatusCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,17 +23,6 @@ public class SpecController {
     @Autowired
     private SpecService specService;
 
-    /**
-     * 根据商品分类的ID 查询该分类对应的 规格的列表
-     * @param categoryId 分类 id
-     */
-    @GetMapping("/category/{id}")
-    public Result<List<Spec>> findByCategoryId(@PathVariable("id") Integer categoryId){
-        List<Spec> specList = specService.findByCategoryId(categoryId);
-
-        return new Result<>(true,StatusCode.OK,"查询规格的列表成功",specList);
-    }
-
     /***
      * Spec分页条件搜索实现
      * @param spec
@@ -45,7 +34,7 @@ public class SpecController {
     public Result<PageInfo> findPage(@RequestBody(required = false)  Spec spec, @PathVariable  int page, @PathVariable  int size){
         //调用SpecService实现分页条件查询Spec
         PageInfo<Spec> pageInfo = specService.findPage(spec, page, size);
-        return new Result(true, StatusCode.OK,"查询成功",pageInfo);
+        return new Result(true,StatusCode.OK,"查询成功",pageInfo);
     }
 
     /***
@@ -135,4 +124,16 @@ public class SpecController {
         return new Result<List<Spec>>(true, StatusCode.OK,"查询成功",list) ;
     }
 
+
+    /**
+     * 根据商品分类的ID 查询该分类对应的 规格的列表
+     *
+     */
+
+
+    @GetMapping("/category/{id}")
+    public Result<List<Spec>> findByCategoryId(@PathVariable(name="id") Integer id){
+        List<Spec> specList = specService.findByCategoryId(id);
+        return new Result<List<Spec>>(true,StatusCode.OK,"查询规格的列表成功",specList);
+    }
 }

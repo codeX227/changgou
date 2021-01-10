@@ -1,8 +1,8 @@
 package com.changgou.item.controller;
 
-import com.changgou.goods.entity.Result;
-import com.changgou.goods.entity.StatusCode;
 import com.changgou.item.service.PageService;
+import entity.Result;
+import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

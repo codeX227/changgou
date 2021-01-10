@@ -2,17 +2,20 @@ package com.changgou.content.controller;
 
 import com.changgou.content.pojo.Content;
 import com.changgou.content.service.ContentService;
-import com.changgou.goods.entity.Result;
-import com.changgou.goods.entity.StatusCode;
 import com.github.pagehelper.PageInfo;
+import entity.Result;
+import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * @Description: 广告
- **/
+/****
+ * @Author:admin
+ * @Description:
+ * @Date 2019/6/14 0:18
+ *****/
+
 @RestController
 @RequestMapping("/content")
 @CrossOrigin
@@ -32,7 +35,7 @@ public class ContentController {
     public Result<PageInfo> findPage(@RequestBody(required = false)  Content content, @PathVariable  int page, @PathVariable  int size){
         //调用ContentService实现分页条件查询Content
         PageInfo<Content> pageInfo = contentService.findPage(content, page, size);
-        return new Result(true, StatusCode.OK,"查询成功",pageInfo);
+        return new Result(true,StatusCode.OK,"查询成功",pageInfo);
     }
 
     /***

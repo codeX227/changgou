@@ -10,6 +10,14 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import java.util.Date;
 
+/**
+ * 描述
+ *
+ * @author www.itheima.com
+ * @version 1.0
+ * @package entity *
+ * @since 1.0
+ */
 public class JwtUtil {
     //有效期为
     public static final Long JWT_TTL = 3600000L;// 60 * 60 *1000  一个小时
@@ -17,6 +25,13 @@ public class JwtUtil {
     //Jwt令牌信息
     public static final String JWT_KEY = "itcast";
 
+    /**
+     * 生成令牌
+     * @param id
+     * @param subject
+     * @param ttlMillis
+     * @return
+     */
     public static String createJWT(String id, String subject, Long ttlMillis) {
         //指定算法
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -27,8 +42,8 @@ public class JwtUtil {
         Date now = new Date(nowMillis);
 
         //如果令牌有效期为null，则默认设置有效期1小时
-        if(ttlMillis==null){
-            ttlMillis=JwtUtil.JWT_TTL;
+        if (ttlMillis == null) {
+            ttlMillis = JwtUtil.JWT_TTL;
         }
 
         //令牌过期时间设置
@@ -51,6 +66,7 @@ public class JwtUtil {
 
     /**
      * 生成加密 secretKey
+     *
      * @return
      */
     public static SecretKey generalKey() {
@@ -62,6 +78,7 @@ public class JwtUtil {
 
     /**
      * 解析令牌数据
+     *
      * @param jwt
      * @return
      * @throws Exception
@@ -72,5 +89,18 @@ public class JwtUtil {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(jwt)
                 .getBody();
+    }
+
+    public static void main(String[] args) {
+        String jwt = JwtUtil.createJWT("weiyibiaoshi", "aaaaaa", null);
+        System.out.println(jwt);
+        try {
+            Claims claims = JwtUtil.parseJWT(jwt);
+            System.out.println(claims);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 }

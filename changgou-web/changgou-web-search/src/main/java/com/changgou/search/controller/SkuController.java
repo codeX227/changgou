@@ -1,8 +1,8 @@
 package com.changgou.search.controller;
 
-import com.changgou.goods.entity.Page;
 import com.changgou.search.feign.SkuFeign;
 import com.changgou.search.pojo.SkuInfo;
+import entity.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
+/**
+ * 描述
+ *
+ * @author www.itheima.com
+ * @version 1.0
+ * @package com.changgou.search.controller *
+ * @since 1.0
+ */
 @Controller
 @RequestMapping("/search")
 public class SkuController {
@@ -20,76 +28,54 @@ public class SkuController {
     @Autowired
     private SkuFeign skuFeign;
 
-    /**
-     * 实现搜索调用
-     */
+
     @GetMapping("/list")
-    public String search(@RequestParam(required = false) Map<String,String> searchMap, Model model) throws Exception {
-        //替换特殊字符
-        handlerSearchMap(searchMap);
+    public String search(@RequestParam(required = false) Map<String, String> searchMap, Model model) {
+        //1.调用搜索微服务的 feign  根据搜索的条件参数 查询 数据
+        Map resultmap = skuFeign.search(searchMap);
+        //2.将数据设置到model中     (模板文件中 根据th:标签数据展示)
+        //搜索的结果设置
+        model.addAttribute("result", resultmap);
 
-        //调用搜索微服务
-        Map resultMap = skuFeign.search(searchMap);
-        model.addAttribute("result",resultMap);
-
-        //计算分页
-        Page<SkuInfo> pageInfo = new Page<>(Long.parseLong(resultMap.get("total").toString()), Integer.parseInt(resultMap.get("pageNumber").toString())+1, Integer.parseInt(resultMap.get("pageSize").toString()));
-        model.addAttribute("pageInfo",pageInfo);
-
-        //讲条件存储，用于页面回显数据
+        //3.设置搜索的条件 回显
         model.addAttribute("searchMap",searchMap);
 
-        //获取上次请求地址
-        String[] urls = url(searchMap);
-        model.addAttribute("url",urls[0]);
-        model.addAttribute("sorturl",urls[1]);
+        //4.记住之前的URL
+        //拼接url
+        String url = url(searchMap);
+        model.addAttribute("url",url);
 
+        //创建一个分页的对象  可以获取当前页 和总个记录数和显示的页码(以当前页为中心的5个页码)
+        Page<SkuInfo> infoPage = new Page<SkuInfo>(
+                Long.valueOf(resultmap.get("total").toString()),
+                Integer.valueOf(resultmap.get("pageNum").toString()),
+                Integer.valueOf(resultmap.get("pageSize").toString())
+        );
+
+        model.addAttribute("page",infoPage);
+        //3.返回
         return "search";
     }
 
-    /**
-     * 拼接用户请求的url
-     * 获取用户每次请求的utl+页面需要在这次请求地址上添加额外搜索条件
-     */
-    public String[] url(Map<String,String> searchMap){
-        String url = "/search/list";//初始化地址
-        String sortUrl = "/search/list";//排序地址
-        if (searchMap!=null && searchMap.size()>0){
+    private String url(Map<String, String> searchMap) {
+        String url = "/search/list";
+        if(searchMap!=null && searchMap.size()>0){
             url+="?";
-            sortUrl+="?";
-            for (Map.Entry<String, String> entry : searchMap.entrySet()) {
-                //搜索条件对象
-                String key = entry.getKey();
-                //搜索的值
-                String value = entry.getValue();
-                url = url + key +"=" + value + "&";
-
-                //跳过分页参数
-                if (key.equalsIgnoreCase("pageNum")){
+            for (Map.Entry<String, String> stringStringEntry : searchMap.entrySet()) {
+                String key = stringStringEntry.getKey();// keywords / brand  / category
+                String value = stringStringEntry.getValue();//华为  / 华为  / 笔记本
+                if(key.equals("pageNum")){
                     continue;
                 }
-                //排序参数 跳过
-                if (key.equalsIgnoreCase("sortField") || key.equalsIgnoreCase("sortRule")){
-                    continue;
-                }
-                sortUrl = sortUrl + key + "=" + value + "&";
+                url+=key+"="+value+"&";
             }
-            //去掉最后一个"&"
-            url = url.substring(0,url.length()-1);
-            sortUrl = sortUrl.substring(0,url.length()-1);
-        }
-        return new String[]{url,sortUrl};
-    }
 
-    /**
-     * 替换特殊字符
-     */
-    public void handlerSearchMap(Map<String,String> searchMap){
-        if (searchMap != null){
-            for (Map.Entry<String, String> entry : searchMap.entrySet()) {
-                if (entry.getKey().startsWith("spec_"))
-                    entry.setValue(entry.getValue().replace("+","%2B"));
+            //去掉多余的&
+            if(url.lastIndexOf("&")!=-1){
+               url =  url.substring(0,url.lastIndexOf("&"));
             }
+
         }
+        return url;
     }
 }

@@ -1,18 +1,13 @@
 package com.changgou.goods.service;
-
 import com.changgou.goods.pojo.Para;
 import com.github.pagehelper.PageInfo;
 import java.util.List;
-
-/**
+/****
+ * @Author:admin
  * @Description:Para业务层接口
- **/
+ * @Date 2019/6/14 0:16
+ *****/
 public interface ParaService {
-
-    /**
-     * 根据分类 id查询参数集合->分类template_id->根据template_id查询参数集合
-     */
-    List<Para> findParaByCategoryId(Integer categoryId);
 
     /***
      * Para多条件分页查询
@@ -68,5 +63,7 @@ public interface ParaService {
      * @return
      */
     List<Para> findAll();
+
+    List<Para> findParaByCateogryId(Integer id);
 
 }

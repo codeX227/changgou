@@ -1,18 +1,21 @@
 package com.changgou.goods.controller;
-import com.changgou.goods.entity.Result;
-import com.changgou.goods.entity.StatusCode;
 import com.changgou.goods.pojo.Goods;
 import com.changgou.goods.pojo.Spu;
 import com.changgou.goods.service.SpuService;
 import com.github.pagehelper.PageInfo;
+import entity.Result;
+import entity.StatusCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-/**
- *
- **/
+/****
+ * @Author:admin
+ * @Description:
+ * @Date 2019/6/14 0:18
+ *****/
+
 @RestController
 @RequestMapping("/spu")
 @CrossOrigin
@@ -20,85 +23,6 @@ public class SpuController {
 
     @Autowired
     private SpuService spuService;
-
-    /**
-     * 恢复数据
-     * @param id
-     */
-    @PutMapping("/restore/{id}")
-    public Result restore(@PathVariable Long id){
-        spuService.restore(id);
-
-        return new Result(true,StatusCode.OK,"数据恢复成功！");
-    }
-
-    /**
-     * 逻辑删除
-     * @param id
-     * @return
-     */
-    @DeleteMapping("/logic/delete/{id}")
-    public Result logicDelete(@PathVariable Long id){
-        spuService.logicDelete(id);
-        return new Result(true,StatusCode.OK,"逻辑删除成功！");
-    }
-
-    /**
-     *  批量上架
-     * @param spuIds 要上架的所有商品ID
-     */
-    @PutMapping("/put/many")
-    public Result putMany(@RequestBody Long[] spuIds){
-        spuService.putMany(spuIds);
-
-        return new Result(true,StatusCode.OK,"上架成功");
-    }
-
-    /**
-     * 商品上架
-     */
-    @PutMapping("/put/{id}")
-    public Result put(@PathVariable Long id){
-        spuService.put(id);
-
-        return new Result(true,StatusCode.OK,"上架成功");
-    }
-
-    @PutMapping("/pull/{id}")
-    public Result pull(@PathVariable("id")Long spuId){
-        spuService.pull(spuId);
-
-        return new Result(true,StatusCode.OK,"下架成功");
-    }
-
-    /**
-     * 审核商品
-     */
-    @PutMapping("/audit/{id}")
-    public Result audit(@PathVariable("id")Long spuId){
-        spuService.audit(spuId);
-
-        return new Result(true,StatusCode.OK,"审核通过");
-    }
-
-    /**
-     * 根据点击到的商品(Spu)的ID 查询GOODS数据
-     */
-    @GetMapping("/goods/{id}")
-    public Result<Goods> findGoodsById(@PathVariable("id") Long id){
-        Goods goods = spuService.findGoodsById(id);
-
-        return new Result<>(true,StatusCode.OK,"查询goods数据成功",goods);
-    }
-
-    /**
-     * Goods(SPU+SKU)增加方法详情
-     */
-    @PostMapping("/save")
-    public Result saveGoods(@RequestBody Goods goods){
-        spuService.saveGoods(goods);
-        return new Result(true,StatusCode.OK,"保存商品成功",null);
-    }
 
     /***
      * Spu分页条件搜索实现
@@ -108,12 +32,10 @@ public class SpuController {
      * @return
      */
     @PostMapping(value = "/search/{page}/{size}" )
-    public Result<PageInfo<Spu>> findPage(@RequestBody(required = false) Spu spu,
-                                     @PathVariable int page,
-                                     @PathVariable  int size){
+    public Result<PageInfo> findPage(@RequestBody(required = false)  Spu spu, @PathVariable  int page, @PathVariable  int size){
         //调用SpuService实现分页条件查询Spu
         PageInfo<Spu> pageInfo = spuService.findPage(spu, page, size);
-        return new Result(true, StatusCode.OK,"查询成功",pageInfo);
+        return new Result(true,StatusCode.OK,"查询成功",pageInfo);
     }
 
     /***
@@ -122,8 +44,8 @@ public class SpuController {
      * @param size:每页显示多少条
      * @return
      */
-    @GetMapping("/search/{page}/{size}" )
-    public Result<PageInfo> findPage(@PathVariable("page") int page, @PathVariable("size") int size){
+    @GetMapping(value = "/search/{page}/{size}" )
+    public Result<PageInfo> findPage(@PathVariable  int page, @PathVariable  int size){
         //调用SpuService实现分页查询Spu
         PageInfo<Spu> pageInfo = spuService.findPage(page, size);
         return new Result<PageInfo>(true,StatusCode.OK,"查询成功",pageInfo);
@@ -160,7 +82,7 @@ public class SpuController {
      * @return
      */
     @PutMapping(value="/{id}")
-    public Result update(@RequestBody Spu spu,@PathVariable Long id){
+    public Result update(@RequestBody  Spu spu,@PathVariable Long id){
         //设置主键值
         spu.setId(id);
         //调用SpuService实现修改Spu
@@ -174,7 +96,7 @@ public class SpuController {
      * @return
      */
     @PostMapping
-    public Result add(@RequestBody Spu spu){
+    public Result add(@RequestBody   Spu spu){
         //调用SpuService实现添加Spu
         spuService.add(spu);
         return new Result(true,StatusCode.OK,"添加成功");
@@ -202,4 +124,55 @@ public class SpuController {
         List<Spu> list = spuService.findAll();
         return new Result<List<Spu>>(true, StatusCode.OK,"查询成功",list) ;
     }
+
+    /**
+     * Goods(SPU+SKU)增加方法详情
+     */
+    @PostMapping("/save")
+    public Result save(@RequestBody Goods goods){
+        spuService.save(goods);
+        return new Result(true,StatusCode.OK,"保存商品成功",null);
+    }
+
+    //根据点击到的商品(SPU)的ID 获取到GOODS数据返回给页面展示
+    @GetMapping("/goods/{id}")
+    public Result<Goods> findGoodsById(@PathVariable(value="id") Long id){
+        Goods goods = spuService.findGoodsById(id);
+        return new Result<Goods>(true,StatusCode.OK,"查询goods数据成功",goods);
+    }
+
+
+
+    /**
+     * //审核商品 自动上架
+     * @param id  spu的ID
+     * @return
+     */
+    @PutMapping("/audit/{id}")
+    public Result auditSpu(@PathVariable(name="id")Long id){
+        spuService.auditSpu(id);
+        return new Result(true,StatusCode.OK,"审核通过");
+    }
+
+    @PutMapping("/pull/{id}")
+    public Result pullSpu(@PathVariable(name="id")Long id){
+        spuService.pullSpu(id);
+        return new Result(true,StatusCode.OK,"下架成功");
+    }
+
+    @DeleteMapping("/logic/delete/{id}")
+    public Result logicDeleteSpu(@PathVariable(name="id")Long id){
+        spuService.logicDeleteSpu(id);
+        return new Result(true,StatusCode.OK,"逻辑删除成功");
+    }
+
+    @PutMapping("/restore/{id}")
+    public Result restore(@PathVariable(name="id")Long id){
+        spuService.restoreSpu(id);
+        return new Result(true,StatusCode.OK,"还原成功");
+    }
+
+
+
+
 }

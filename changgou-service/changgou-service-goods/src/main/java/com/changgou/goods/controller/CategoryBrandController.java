@@ -1,9 +1,9 @@
 package com.changgou.goods.controller;
-import com.changgou.goods.entity.Result;
 import com.changgou.goods.pojo.CategoryBrand;
 import com.changgou.goods.service.CategoryBrandService;
 import com.github.pagehelper.PageInfo;
-import com.changgou.goods.entity.StatusCode;
+import entity.Result;
+import entity.StatusCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

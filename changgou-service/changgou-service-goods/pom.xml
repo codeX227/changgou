@@ -5,18 +5,38 @@
     <parent>
         <artifactId>changgou-service</artifactId>
         <groupId>com.changgou</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <description>畅购微服务，changgou-goods数据库的管理</description>
+
     <artifactId>changgou-service-goods</artifactId>
 
+    <description>
+        商品的微服务工程
+    </description>
+
     <dependencies>
+        <!--client openg start-web mybatis mysql pagehler -->
+
+        <!--依赖来自定义的goods微服务的POJO 和feign-->
         <dependency>
             <groupId>com.changgou</groupId>
             <artifactId>changgou-service-goods-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-oauth2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.changgou</groupId>
+            <artifactId>changgou-service-order-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
+
 
 </project>

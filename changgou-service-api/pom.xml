@@ -5,24 +5,37 @@
     <parent>
         <artifactId>changgou-parent</artifactId>
         <groupId>com.changgou</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+
     <artifactId>changgou-service-api</artifactId>
     <packaging>pom</packaging>
-    <description>所有微服务的API抽取(JavaBean|Feign)</description>
+
+    <description>
+        通用的API javean feign的父工程
+    </description>
     <modules>
-        <module>changgou-service-user</module>
+        <module>changgou-service-goods-api</module>
+        <module>changgou-service-content-api</module>
+        <module>changgou-service-search-api</module>
+        <module>changgou-web-item-api</module>
+        <module>changgou-service-user-api</module>
+        <module>changgou-service-order-api</module>
     </modules>
 
     <dependencies>
+
+
+
+        <!--通用的common  要有feign的依赖-->
         <dependency>
             <groupId>com.changgou</groupId>
             <artifactId>changgou-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- pojo 对应注解 -->
+        <!--每个工程都有Pojo，都需要用到该包对应的注解-->
         <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>persistence-api</artifactId>
@@ -30,4 +43,6 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+
 </project>

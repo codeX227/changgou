@@ -9,12 +9,6 @@ import java.util.List;
  *****/
 public interface CategoryService {
 
-    /**
-     * 根据分类的父节点ID查询所有字节的集合
-     * @param pid 父节点ID->1级分类=0
-     */
-    List<Category> findByParentId(Integer pid);
-
     /***
      * Category多条件分页查询
      * @param category
@@ -69,4 +63,7 @@ public interface CategoryService {
      * @return
      */
     List<Category> findAll();
+
+
+    List<Category> findByParentId(Integer pid);
 }

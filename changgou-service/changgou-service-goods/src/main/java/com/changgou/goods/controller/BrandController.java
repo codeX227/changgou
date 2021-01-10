@@ -1,9 +1,9 @@
 package com.changgou.goods.controller;
-import com.changgou.goods.entity.Result;
-import com.changgou.goods.entity.StatusCode;
 import com.changgou.goods.pojo.Brand;
 import com.changgou.goods.service.BrandService;
 import com.github.pagehelper.PageInfo;
+import entity.Result;
+import entity.StatusCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,16 +23,6 @@ public class BrandController {
     @Autowired
     private BrandService brandService;
 
-    /**
-     * 根据分类 id查询品牌集合
-     */
-    @GetMapping("/category/{id}")
-    public Result<List<Brand>> findBrandByCategory(@PathVariable(name="id") Integer categoryId){
-        List<Brand> brands = brandService.findByCategory(categoryId);
-
-        return new Result<>(true,StatusCode.OK,"查询成功",brands);
-    }
-
     /***
      * Brand分页条件搜索实现
      * @param brand
@@ -44,7 +34,7 @@ public class BrandController {
     public Result<PageInfo> findPage(@RequestBody(required = false)  Brand brand, @PathVariable  int page, @PathVariable  int size){
         //调用BrandService实现分页条件查询Brand
         PageInfo<Brand> pageInfo = brandService.findPage(brand, page, size);
-        return new Result(true, StatusCode.OK,"查询成功",pageInfo);
+        return new Result(true,StatusCode.OK,"查询成功",pageInfo);
     }
 
     /***
@@ -129,9 +119,28 @@ public class BrandController {
      */
     @GetMapping
     public Result<List<Brand>> findAll(){
+        try {
+            System.out.println("aaaaa=====");
+            Thread.sleep(3000);
+            System.out.println("bbbb=====");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //调用BrandService实现查询所有Brand
         List<Brand> list = brandService.findAll();
         return new Result<List<Brand>>(true, StatusCode.OK,"查询成功",list) ;
     }
 
+
+    /**
+     *
+     * @return
+     */
+    @GetMapping("/category/{id}")
+    public Result<List<Brand>> findBrandByCategory(@PathVariable(name="id") Integer id){
+       List<Brand> brandList = brandService.findByCategory(id);
+
+       return new Result<List<Brand>>(true,StatusCode.OK,"查询品牌列表成功",brandList);
+
+    }
 }

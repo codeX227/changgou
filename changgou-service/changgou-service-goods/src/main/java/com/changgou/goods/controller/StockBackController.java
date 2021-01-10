@@ -1,9 +1,9 @@
 package com.changgou.goods.controller;
-import com.changgou.goods.entity.Result;
-import com.changgou.goods.entity.StatusCode;
 import com.changgou.goods.pojo.StockBack;
 import com.changgou.goods.service.StockBackService;
 import com.github.pagehelper.PageInfo;
+import entity.Result;
+import entity.StatusCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +34,7 @@ public class StockBackController {
     public Result<PageInfo> findPage(@RequestBody(required = false)  StockBack stockBack, @PathVariable  int page, @PathVariable  int size){
         //调用StockBackService实现分页条件查询StockBack
         PageInfo<StockBack> pageInfo = stockBackService.findPage(stockBack, page, size);
-        return new Result(true, StatusCode.OK,"查询成功",pageInfo);
+        return new Result(true,StatusCode.OK,"查询成功",pageInfo);
     }
 
     /***

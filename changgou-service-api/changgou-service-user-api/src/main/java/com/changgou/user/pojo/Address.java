@@ -3,6 +3,11 @@ package com.changgou.user.pojo;
 import javax.persistence.*;
 import java.io.Serializable;
 
+/****
+ * @Author:admin
+ * @Description:Address构建
+ * @Date 2019/6/14 19:13
+ *****/
 @Table(name="tb_address")
 public class Address implements Serializable{
 

@@ -1,20 +1,23 @@
 package com.changgou.goods.controller;
 
-import com.changgou.goods.entity.Result;
-import com.changgou.goods.entity.StatusCode;
 import com.changgou.goods.pojo.Para;
 import com.changgou.goods.service.ParaService;
 import com.github.pagehelper.PageInfo;
+import entity.Result;
+import entity.StatusCode;
 
+import org.apache.ibatis.annotations.ResultType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- *
- * 商品参数
- **/
+/****
+ * @Author:admin
+ * @Description:
+ * @Date 2019/6/14 0:18
+ *****/
+
 @RestController
 @RequestMapping("/para")
 @CrossOrigin
@@ -22,18 +25,6 @@ public class ParaController {
 
     @Autowired
     private ParaService paraService;
-
-    /**
-     * 根据3 商品的分类的ID 查询该三级分类对应的参数的列表
-     * @param categoryId 分类的ID
-     * @return
-     */
-    @GetMapping("/category/{id}")
-    public Result<List<Para>> findParaByCategoryId(@PathVariable("id") Integer categoryId) {
-        List<Para> paraList = paraService.findParaByCategoryId(categoryId);
-
-        return new Result<>(true, StatusCode.OK, "参数列表查询成功", paraList);
-    }
 
     /***
      * Para分页条件搜索实现
@@ -135,5 +126,18 @@ public class ParaController {
         List<Para> list = paraService.findAll();
         return new Result<List<Para>>(true, StatusCode.OK, "查询成功", list);
     }
+
+    /**
+     * 根据3 商品的分类的ID 查询该三级分类对应的参数的列表
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/category/{id}")
+    public Result<List<Para>> findParaByCateogryId(@PathVariable(name = "id") Integer id) {
+        List<Para> paraList = paraService.findParaByCateogryId(id);
+        return new Result<List<Para>>(true, StatusCode.OK, "参数列表查询成功", paraList);
+    }
+
 
 }

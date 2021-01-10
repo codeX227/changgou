@@ -1,13 +1,13 @@
 package com.changgou.item.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.changgou.goods.entity.Result;
 import com.changgou.goods.feign.CategoryFeign;
 import com.changgou.goods.feign.SkuFeign;
 import com.changgou.goods.feign.SpuFeign;
 import com.changgou.goods.pojo.Sku;
 import com.changgou.goods.pojo.Spu;
 import com.changgou.item.service.PageService;
+import entity.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

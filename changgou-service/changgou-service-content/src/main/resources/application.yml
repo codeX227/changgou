@@ -17,9 +17,9 @@ eureka:
 feign:
   hystrix:
     enabled: true
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true  #开启驼峰功能
+#mybatis:
+#  configuration:
+#    map-underscore-to-camel-case: true  #开启驼峰功能
 
 #hystrix 配置
 hystrix:
@@ -27,7 +27,7 @@ hystrix:
     default:
       execution:
         timeout:
-          #如果enabled设置为false，则请求超时交给ribbon控制
+        #如果enabled设置为false，则请求超时交给ribbon控制
           enabled: true
         isolation:
           strategy: SEMAPHORE

@@ -9,21 +9,34 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-@Document(indexName = "skuinfo",type = "docs")
+/**
+ * 1.创建索引
+ * 2.创建类型
+ * 3.创建文档 ()
+ * 4.字段的映射(是否分词 是否索引 是否存储  数据类型是什么 分词器是什么)
+ *
+ * @author www.itheima.com
+ * @version 1.0
+ * @Document(indexName = "skuinfo",type = "docs")
+ * indexName 指定创建的索引的名称
+ * type :指定索引中的类型
+ * @package PACKAGE_NAME *
+ * @since 1.0
+ */
+
+@Document(indexName = "skuinfo", type = "docs")
 public class SkuInfo implements Serializable {
-    //商品id，同时也是商品编号
+
+
+    //@id 表示文档的唯一标识
     @Id
     private Long id;
 
-    /**
-     * SKU名称
-     * type = FieldType.Text Text类型，Text支持分词
-     * index = true 添加数据时是否分词
-     * analyzer = "ik_smart" 创建索引的分词器
-     * store = false 是否存储
-     * searchAnalyzer = "ik_smart" 搜索时使用的分词器
-     */
-    @Field(type = FieldType.Text,analyzer = "ik_smart",index = true,store = false,searchAnalyzer = "ik_smart")
+    //SKU名称
+    // @Field 字段的映射
+    // analyzer 指定索引的是用的分词分词器   searchAnalyzer :搜索的时候使用的分词器
+    // type 指定数据类型
+    @Field(type = FieldType.Text, analyzer = "ik_smart")
     private String name;
 
     //商品价格，单位为：元
@@ -31,9 +44,11 @@ public class SkuInfo implements Serializable {
     private Long price;
 
     //库存数量
+
     private Integer num;
 
     //商品图片
+    //@Field(index = false)
     private String image;
 
     //商品状态，1-正常，2-下架，3-删除
@@ -54,10 +69,8 @@ public class SkuInfo implements Serializable {
     //类目ID
     private Long categoryId;
 
-    /**
-     * 类目名称
-     * type = FieldType.Keyword 不分词
-     */
+    //类目名称
+    // FieldType.Keyword 是一个关键字 (keyword) 表示不分词.
     @Field(type = FieldType.Keyword)
     private String categoryName;
 
@@ -66,10 +79,15 @@ public class SkuInfo implements Serializable {
     private String brandName;
 
     //规格
+
     private String spec;
 
+    //动态的域的添加和变化
+
     //规格参数
-    private Map<String,Object> specMap;
+    //@Field(type = FieldType.Object)
+    private Map<String, Object> specMap;
+
 
     public Long getId() {
         return id;

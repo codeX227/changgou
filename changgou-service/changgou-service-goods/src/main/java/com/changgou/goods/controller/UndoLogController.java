@@ -1,9 +1,10 @@
 package com.changgou.goods.controller;
-import com.changgou.goods.entity.Result;
-import com.changgou.goods.entity.StatusCode;
 import com.changgou.goods.pojo.UndoLog;
 import com.changgou.goods.service.UndoLogService;
 import com.github.pagehelper.PageInfo;
+import entity.Result;
+import entity.StatusCode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -33,7 +34,7 @@ public class UndoLogController {
     public Result<PageInfo> findPage(@RequestBody(required = false)  UndoLog undoLog, @PathVariable  int page, @PathVariable  int size){
         //调用UndoLogService实现分页条件查询UndoLog
         PageInfo<UndoLog> pageInfo = undoLogService.findPage(undoLog, page, size);
-        return new Result(true, StatusCode.OK,"查询成功",pageInfo);
+        return new Result(true,StatusCode.OK,"查询成功",pageInfo);
     }
 
     /***

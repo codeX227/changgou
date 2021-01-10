@@ -7,13 +7,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
-@FeignClient(name = "search")
+/**
+ * 描述
+ *
+ * @author www.itheima.com
+ * @version 1.0
+ * @package com.changgou.search.feign *
+ * @since 1.0
+ */
+@FeignClient(name="search")
 @RequestMapping("/search")
 public interface SkuFeign {
-
-    /**
-     * 调用搜索实现
-     */
     @GetMapping
-    Map search(@RequestParam(required = false) Map<String,String> searchMap) throws Exception;
+    public Map search(@RequestParam(required = false) Map searchMap);
 }

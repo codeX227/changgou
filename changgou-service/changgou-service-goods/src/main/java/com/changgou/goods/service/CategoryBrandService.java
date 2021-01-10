@@ -1,10 +1,7 @@
 package com.changgou.goods.service;
-
 import com.changgou.goods.pojo.CategoryBrand;
 import com.github.pagehelper.PageInfo;
-
 import java.util.List;
-
 /****
  * @Author:admin
  * @Description:CategoryBrand业务层接口

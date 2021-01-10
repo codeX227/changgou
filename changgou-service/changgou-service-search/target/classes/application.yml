@@ -1,12 +1,12 @@
 server:
-  port: 18086
+  port: 18085
 spring:
   application:
     name: search
   data:
     elasticsearch:
       cluster-name: my-application
-      cluster-nodes: localhost:9300
+      cluster-nodes: 192.168.211.132:9300
 eureka:
   client:
     service-url:
@@ -16,6 +16,15 @@ eureka:
 feign:
   hystrix:
     enabled: true
+  httpclient:
+    connection-timeout: 10000
+  client:
+    config:
+      default: # 指定feignclients对应的名称 如果指定的是default 表示全局所有的client 的超时时间设置
+        connectTimeout: 10000
+        readTimeout: 10000
+        loggerLevel: basic
+
 #超时配置
 ribbon:
   ReadTimeout: 300000

@@ -1,6 +1,7 @@
 package com.changgou.filter;
 
 import com.changgou.util.JwtUtil;
+import io.jsonwebtoken.Claims;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -13,62 +14,78 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+/**
+ * 全局过滤器 :用于鉴权(获取令牌 解析 判断)
+ *
+ * @author www.itheima.com
+ * @version 1.0
+ * @package com.changgou.filter *
+ * @since 1.0
+ */
 @Component
 public class AuthorizeFilter implements GlobalFilter, Ordered {
-
-    //令牌头名字
     private static final String AUTHORIZE_TOKEN = "Authorization";
 
-    /**
-     * 全局拦截
-     */
+    private static final String loginURL = "http://localhost:9001/oauth/login";
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
+        //1.获取请求对象
         ServerHttpRequest request = exchange.getRequest();
+        //2.获取响应对象
         ServerHttpResponse response = exchange.getResponse();
 
-        //获取用户令牌信息
-        //请求头中
-        String token = request.getHeaders().getFirst(AUTHORIZE_TOKEN);
-        //boolean true：令牌在头文件中  false：令牌不在头文件-将令牌封装到头文件再传给其他微服务
-        boolean hasToken = true;
-
-        //请求参数中
-        if (StringUtils.isEmpty(token)){
-           token = request.getQueryParams().getFirst(AUTHORIZE_TOKEN);
-           hasToken = false;
+        //3.判断 是否为登录的URL 如果是 放行
+        if(UrlFilter.hasAutorize(request.getURI().toString())){
+            return chain.filter(exchange);
         }
-        //cookie中
-        if (StringUtils.isEmpty(token)){
-            HttpCookie httpCookie = request.getCookies().getFirst(AUTHORIZE_TOKEN);
-            if (httpCookie != null){
-                token = httpCookie.getValue();
+        //4.判断 是否为登录的URL 如果不是      权限校验
+
+
+        //4.1 从头header中获取令牌数据
+        String token = request.getHeaders().getFirst(AUTHORIZE_TOKEN);
+
+        if(StringUtils.isEmpty(token)){
+            //4.2 从cookie中中获取令牌数据
+            HttpCookie first = request.getCookies().getFirst(AUTHORIZE_TOKEN);
+            if(first!=null){
+                token=first.getValue();//就是令牌的数据
             }
         }
 
-        //没有令牌则拦截
-        if (StringUtils.isEmpty(token)){
-            //设置没有权限的状态码 401
-            response.setStatusCode(HttpStatus.UNAUTHORIZED);
-            //响应空数据
+        if(StringUtils.isEmpty(token)){
+            //4.3 从请求参数中获取令牌数据
+            token= request.getQueryParams().getFirst(AUTHORIZE_TOKEN);
+        }
+
+        if(StringUtils.isEmpty(token)){
+            //4.4. 如果没有数据    没有登录,要重定向到登录到页面
+            response.setStatusCode(HttpStatus.SEE_OTHER);//303 302
+            //location 指定的就是路径
+            response.getHeaders().set("Location",loginURL+"?From="+request.getURI().toString());
             return response.setComplete();
         }
 
-        //有令牌则校验是否有效
+
+        //5 解析令牌数据 ( 判断解析是否正确,正确 就放行 ,否则 结束)
+
         try {
-            JwtUtil.parseJWT(token);
+            //Claims claims = JwtUtil.parseJWT(token);
+
+
+
         } catch (Exception e) {
-            //无效则拦截
-            //设置没有权限的状态码 401
+            e.printStackTrace();
+            //解析失败
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
-            //响应空数据
             return response.setComplete();
         }
 
-        //将令牌封装到头文件
-        request.mutate().header(AUTHORIZE_TOKEN,token);
+        //添加头信息 传递给 各个微服务()
+        request.mutate().header(AUTHORIZE_TOKEN,"Bearer "+ token);
 
-        //有效放行
+
+
         return chain.filter(exchange);
     }
 
