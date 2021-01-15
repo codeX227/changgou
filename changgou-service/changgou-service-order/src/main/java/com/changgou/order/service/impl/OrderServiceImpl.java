@@ -237,13 +237,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private UserFeign userFeign;
+
     /**
      * 增加Order
      *
      * @param order
      */
     @Override
-    public void add(Order order) {
+    public Order add(Order order) {
         //1.添加订单表的数据
         order.setId(idWorker.nextId() + "");
 
@@ -259,7 +260,7 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setOrderId(order.getId());//订单的iD
             orderItem.setIsReturn("0");//未退货
             orderItemMapper.insertSelective(orderItem);
-             //3.减少库存  调用goods 微服务的 feign 减少库存
+            //3.减少库存  调用goods 微服务的 feign 减少库存
             skuFeign.decrCount(orderItem);
         }
 
@@ -280,15 +281,17 @@ public class OrderServiceImpl implements OrderService {
 
         //4.增加积分  调用用户微服务的userfeign 增加积分
 
-        userFeign.addPoints(10,order.getUsername());
+        userFeign.addPoints(10, order.getUsername());
 
 
         //5.清空当前的用户的redis中的购物车
 
-        redisTemplate.delete("Cart_"+order.getUsername());
+        redisTemplate.delete("Cart_" + order.getUsername());
 
 
+        //调用定时任务
 
+        return order;
     }
 
     /**
@@ -310,5 +313,21 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findAll() {
         return orderMapper.selectAll();
+    }
+
+    @Override
+    public void updateStatus(String out_trade_no, String transaction_id) {
+        //1.根据id 获取订单的数据
+        Order order = orderMapper.selectByPrimaryKey(out_trade_no);
+        //2.更新
+        order.setUpdateTime(new Date());
+
+        //  支付的时间  从微信的参数中获取
+        order.setPayTime(new Date());
+        order.setOrderStatus("1");
+        order.setPayStatus("1");
+        order.setTransactionId(transaction_id);
+        //3.更新到数据库
+        orderMapper.updateByPrimaryKeySelective(order);
     }
 }

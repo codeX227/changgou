@@ -101,11 +101,11 @@ public class OrderController {
      * @return
      */
     @PostMapping
-    public Result add(@RequestBody Order order) {
+    public Result<Order> add(@RequestBody Order order) {
         //调用OrderService实现添加Order
         order.setUsername(tokenDecode.getUserInfo().get("username"));
-        orderService.add(order);
-        return new Result(true, StatusCode.OK, "添加成功");
+        Order orderResult = orderService.add(order);
+        return new Result(true, StatusCode.OK, "添加成功",orderResult);
     }
 
     /***
