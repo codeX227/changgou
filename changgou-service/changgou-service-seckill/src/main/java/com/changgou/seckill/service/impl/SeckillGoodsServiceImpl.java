@@ -25,7 +25,6 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
     @Autowired
     private SeckillGoodsMapper seckillGoodsMapper;
 
-
     /**
      * SeckillGoods条件+分页查询
      *

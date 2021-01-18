@@ -24,14 +24,12 @@ import java.util.List;
 /****
  * @Author:admin
  * @Description:SeckillOrder业务层接口实现类
- * @Date 2019/6/14 0:16
  *****/
 @Service
 public class SeckillOrderServiceImpl implements SeckillOrderService {
 
     @Autowired
     private SeckillOrderMapper seckillOrderMapper;
-
 
     /**
      * SeckillOrder条件+分页查询
@@ -196,19 +194,13 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
 
     @Override
     public boolean add(Long id, String time, String username) {
-
-
         // 该当前的用户加一个数字+1   incr         使用hash    key field  2
-
         Long userQueueCount = redisTemplate.boundHashOps(SystemConstants.SEC_KILL_QUEUE_REPEAT_KEY).increment(username, 1);
 
         //判断 是否大于1 如果是,返回 ,否则 就放行 重复了.
         if(userQueueCount>1){
             throw  new RuntimeException("20006");
         }
-
-
-
 
         /**
          * username 抢单的用户是谁
@@ -221,11 +213,8 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
         //进入排队中
         redisTemplate.boundListOps(SystemConstants.SEC_KILL_USER_QUEUE_KEY).leftPush(seckillStatus);
 
-
         //进入排队标识
         redisTemplate.boundHashOps(SystemConstants.SEC_KILL_USER_STATUS_KEY).put(username,seckillStatus);
-
-
 
         //多线程下单
         multiThreadingCreateOrder.createrOrder();

@@ -18,11 +18,6 @@ import java.util.Set;
  * 定时任务 spring task(多线程)
  * 1.开始spring task
  * 2.在执行的方法上修饰一个注解  注解中指定何时执行即可
- *
- * @author www.itheima.com
- * @version 1.0
- * @package com.changgou.seckill.timer *
- * @since 1.0
  */
 @Component
 public class SeckillGoodsPushTask {
@@ -44,8 +39,6 @@ public class SeckillGoodsPushTask {
             //2019090516
             String extName =  DateUtil.data2str(starttime,DateUtil.PATTERN_YYYYMMDDHH);
             //3.将循环到的时间段 作为条件 从数据库中执行查询 得出数据集
-
-
             /**
              * select * from tb_seckill_goods where
              stock_count>0
@@ -53,9 +46,6 @@ public class SeckillGoodsPushTask {
              and start_time > 开始时间段
              and end_time < 开始时间段+2hour  and id  not in (redis中已有的id)
              */
-
-
-
             Example example = new Example(SeckillGoods.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("status","1");
@@ -70,9 +60,7 @@ public class SeckillGoodsPushTask {
             }
 
             List<SeckillGoods> seckillGoods = seckillGoodsMapper.selectByExample(example);
-
             //4.将数据集存储到redis中(key field value的数据格式 )
-
             /**
              * key(时间段:2019090516)     field (id:1)   value(商品的数据pojo)
 
@@ -81,11 +69,7 @@ public class SeckillGoodsPushTask {
              key(时间段:2019090518)      field (id:3)   value(商品的数据pojo)
 
                                           field (id:4)   value(商品的数据pojo)
-
-             *
-             *
              */
-
             for (SeckillGoods seckillGood : seckillGoods) {
                 redisTemplate.boundHashOps(SystemConstants.SEC_KILL_GOODS_PREFIX + extName).put(seckillGood.getId(),seckillGood);
                 //设置有效期
@@ -94,13 +78,8 @@ public class SeckillGoodsPushTask {
                 //商品数据压入队列中
                 pushGoods(seckillGood);
                 //添加一个计数器 (key:商品的ID  value : 库存数)
-
                 redisTemplate.boundHashOps(SystemConstants.SECK_KILL_GOODS_COUNT_KEY).increment(seckillGood.getId(),seckillGood.getStockCount());
-
-
             }
-
-
         }
     }
 

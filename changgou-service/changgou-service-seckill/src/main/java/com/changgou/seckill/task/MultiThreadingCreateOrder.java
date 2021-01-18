@@ -36,24 +36,16 @@ public class MultiThreadingCreateOrder {
     //创建订单 异步处理 加入一个注解
     @Async
     public void createrOrder(){
-
-
         //从队列中获取抢单信息()
         SeckillStatus seckillStatus = (SeckillStatus) redisTemplate.boundListOps(SystemConstants.SEC_KILL_USER_QUEUE_KEY).rightPop();
 
         if(seckillStatus!=null) {
-
-
-
-
-
             //测试使用写死
             String time = seckillStatus.getTime();
             Long id = seckillStatus.getGoodsId();//秒杀商品的ID
             String username = seckillStatus.getUsername();
 
             //判断 先从队列中获取商品 ,如果能获取到,说明 有库存,如果获取不到,说明 没库存 卖完了 return.
-
             Object o = redisTemplate.boundListOps(SystemConstants.SEC_KILL_CHAOMAI_LIST_KEY_PREFIX + id).rightPop();
             if(o==null){
                 //卖完了
@@ -65,7 +57,6 @@ public class MultiThreadingCreateOrder {
             }
 
             //1.根据商品的ID 获取秒杀商品的数据
-
             SeckillGoods seckillGoods = (SeckillGoods) redisTemplate.boundHashOps(SystemConstants.SEC_KILL_GOODS_PREFIX + time).get(id);
            /* //2.判断是否有库存  如果 没有  抛出异常 :卖完了
             if (seckillGoods == null || seckillGoods.getStockCount() <= 0) {
@@ -73,7 +64,6 @@ public class MultiThreadingCreateOrder {
             }*/
 
             //3.如果有库存
-
             //4.创建一个预订单
             SeckillOrder seckillOrder = new SeckillOrder();
             seckillOrder.setId(idWorker.nextId());//订单的ID
@@ -97,7 +87,6 @@ public class MultiThreadingCreateOrder {
             } else {
                 //设置回redis中
                 redisTemplate.boundHashOps(SystemConstants.SEC_KILL_GOODS_PREFIX + time).put(id, seckillGoods);
-
             }
             //7.创建订单成功()
 
